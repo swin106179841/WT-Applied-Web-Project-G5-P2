@@ -114,13 +114,13 @@
                 <legend class="formSectionTitle">Skills</legend>
                 <fieldset id="form-skills-check">
                     <legend class="labelRequired">Select Skills that Apply</legend>
-                    <input type="checkbox" name="skills" id="skillA" value="motivated">
+                    <input type="checkbox" name="skills[]" id="skillA" value="motivated">
                     <label for="skillA">Self motivated to complete work.</label>
-                    <input type="checkbox" name="skills" id="skillB" value="time management">
+                    <input type="checkbox" name="skills[]" id="skillB" value="time management">
                     <label for="skillB">Strong time management skills.</label>
-                    <input type="checkbox" name="skills" id="skillC" value="communication">
+                    <input type="checkbox" name="skills[]" id="skillC" value="communication">
                     <label for="skillC">Strong communicator and can respectfully share ideas and feedback. </label>
-                    <input type="checkbox" name="skills" id="skillD" value="enviroment">
+                    <input type="checkbox" name="skills[]" id="skillD" value="enviroment">
                     <label for="skillD">A passion for protecting the enviroment.</label>
                 </fieldset>
                 <p>

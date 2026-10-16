@@ -20,10 +20,11 @@
         $postcode = cleanPost("postcode");
         $email = cleanPost("email");
         $phone = cleanPost("phone");
-        $skills = cleanPost("skills");
+        $skills = "";
         $otherSkills = cleanPost("otherSkills");
 
         $allowedStates = ['VIC', 'NSW', 'QLD', 'NT', 'WA', 'SA', 'TAS', 'ACT'];
+        $allowedSkills = ['motivated', 'time management', 'communication', 'enviroment'];
         $allowedGenders = ['male', 'female'];
 
 
@@ -75,12 +76,16 @@
             $errors['phone'] = "Phone must be a valid Australian phone number.";
         }
         // skills - stored as string to better fit in with database
-        if (!isset($skills)) {
+        $selected_skills = $_POST['skills'] ?? [];
+        if (is_array($selected_skills)) {
+            if (array_diff($selected_skills, $allowedSkills)) {
+                $errors["skills"] = "Invalid skills selection.";
+            } 
+            $skills = implode(",", array_intersect($selected_skills, $allowedSkills));
+        } else {
             $errors["skills-count"] = "Must select at least 1 skill.";
         }
-        if (!preg_match('/^[a-z-A-Z, ]{1,55}$/', $skills)) {
-            $errors['skills'] = "Pick a valid combination of skills";
-        }
+
         // other skills
         if(!isset($otherSkills)) {
             $otherSkills = "";
