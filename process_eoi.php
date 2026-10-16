@@ -1,3 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Recieved</title>
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+    <?php require "header.inc";?>
 <?php
 
     function cleanPost(string $v): string 
@@ -95,11 +105,12 @@
         if ($errors) {
             // status code 400 because: https://stackoverflow.com/questions/3290182/which-status-code-should-i-use-for-failed-validations-or-invalid-duplicates
             http_response_code(400);
-            echo "<h1>Form submission contains the following errors:</h1><ul>";
+            echo "<main><h1>Form submission contains the following errors:</h1><ul>";
             foreach ($errors as $error) {
                 echo "<li>" . $error . "</li>";
             }
-            echo "</ul><p><a href='apply.php'>Return to form</a></p>";
+            echo "</ul><p><a href='apply.php'>Return to form</a></p></main>";
+            require "footer.inc";
             exit;
         }
 
@@ -109,18 +120,20 @@
         $stmt = $conn->prepare("INSERT INTO eoi (job_ref, NAME, surname, dob, gender, street, suburb, state, postcode, email, phone, skills, other_skills) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
         $stmt->bind_param("sssssssssssss", $reference, $name, $surname, $DoB, $gender, $address, $suburb, $state, $postcode, $email, $phone, $skills, $otherSkills);
         $stmt->execute();
-        $result = $stmt->get_result();
         // $stmt = $conn->prepare("SELECT * FROM users WHERE username = ? AND password = ?");
         // $stmt->bind_param("ss", $input_username, $input_password);
         // $stmt->execute();
         // $result = $stmt->get_result();
-        
-        echo "<h1>Application Received</h1>";
+        echo "<main><h1>Application Received</h1>";
         // TODO query database for id number here
-        echo "<p>Your application ID is: ";
-        echo "<p>".$result ."</p>";
+        echo "<p>Your Expression-of-Interest ID is: ";
+        echo $conn->insert_id ."</p></main>";
 
     } else {
         header("Location: ./apply.php");
     }
 ?>
+<?php require "footer.inc";?>
+
+</body>
+</html>
