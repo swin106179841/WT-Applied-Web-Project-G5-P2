@@ -98,9 +98,22 @@
             exit;
         }
 
+        // database connection and create new eoi 
+        require_once("settings.php");
+        $conn = mysqli_connect($host, $user, $pwd, $sql_db);
+        $stmt = $conn->prepare("INSERT INTO eoi (job_ref, NAME, surname, dob, gender, street, suburb, state, postcode, email, phone, skills, other_skills) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+        $stmt->bind_param("sssssssssssss", $reference, $name, $surname, $DoB, $gender, $address, $suburb, $state, $postcode, $email, $phone, $skills, $otherSkills);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        // $stmt = $conn->prepare("SELECT * FROM users WHERE username = ? AND password = ?");
+        // $stmt->bind_param("ss", $input_username, $input_password);
+        // $stmt->execute();
+        // $result = $stmt->get_result();
+        
         echo "<h1>Application Received</h1>";
         // TODO query database for id number here
         echo "<p>Your application ID is: ";
+        echo "<p>".$result ."</p>";
 
     } else {
         header("Location: ./apply.php");
