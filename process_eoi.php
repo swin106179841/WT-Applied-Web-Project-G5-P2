@@ -117,6 +117,10 @@
         // database connection and create new eoi 
         require_once("settings.php");
         $conn = mysqli_connect($host, $user, $pwd, $sql_db);
+
+        // Create eoi table if doesnt exist
+        mysqli_query($conn, "CREATE TABLE IF NOT EXISTS eoi(id INT AUTO_INCREMENT PRIMARY KEY, job_ref VARCHAR(6), NAME VARCHAR(20), surname VARCHAR(20), dob VARCHAR(10), gender VARCHAR(10), street VARCHAR(20), suburb VARCHAR(20), state VARCHAR(10), postcode VARCHAR(4), email VARCHAR(30), phone VARCHAR(11), skills VARCHAR(55), other_skills TEXT, STATUS ENUM('New', 'Current', 'Final') DEFAULT 'New');");
+
         $stmt = $conn->prepare("INSERT INTO eoi (job_ref, NAME, surname, dob, gender, street, suburb, state, postcode, email, phone, skills, other_skills) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
         $stmt->bind_param("sssssssssssss", $reference, $name, $surname, $DoB, $gender, $address, $suburb, $state, $postcode, $email, $phone, $skills, $otherSkills);
         $stmt->execute();
