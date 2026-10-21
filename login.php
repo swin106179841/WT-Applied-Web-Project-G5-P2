@@ -5,7 +5,6 @@ require_once("settings.php");
 
 $error_message = "";
 
-// Kết nối MySQL và tự động tạo database/bảng users nếu chưa có
 $conn = @mysqli_connect($host, $user,$pwd);
 if ($conn) {
     mysqli_query($conn, "CREATE DATABASE IF NOT EXISTS `$sql_db`");
@@ -18,7 +17,6 @@ if ($conn) {
     );";
     mysqli_query($conn,$createUsersTable);
 
-    // Tạo tài khoản mặc định admin / admin (mã hóa bằng password_hash)
     $checkAdmin = mysqli_query($conn, "SELECT * FROM users WHERE username = 'admin'");
     if ($checkAdmin && mysqli_num_rows($checkAdmin) == 0) {$hashed_password = password_hash('admin', PASSWORD_DEFAULT);
         $stmtSeed =$conn->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
@@ -26,7 +24,6 @@ if ($conn) {
         $stmtSeed->execute();$stmtSeed->close();
     }
 
-    // Xử lý khi người dùng nhấn nút Login
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $username = trim($_POST['username'] ?? '');
         $password = trim($_POST['password'] ?? '');

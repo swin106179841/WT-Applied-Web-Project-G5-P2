@@ -47,7 +47,6 @@
         <h1>Current Opportunities</h1>
         <p>Join the G05 team and make a tangible impact on our environment. Browse or search our available conservation projects and roles below.</p>
 
-        <!-- Search Bar Form -->
         <div class="search-container">
             <form method="GET" action="jobs.php">
                 <input type="text" name="search" placeholder="Search by job title or keyword..." value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
@@ -63,7 +62,6 @@
         $conn = @mysqli_connect($host, $user, $pwd, $sql_db);
 
         if (!$conn) {
-            // Fallback connection without DB name to create it if needed
             $conn = @mysqli_connect($host, $user, $pwd);
             if ($conn) {
                 mysqli_query($conn, "CREATE DATABASE IF NOT EXISTS $sql_db");
@@ -72,7 +70,6 @@
         }
 
         if ($conn) {
-            // Create jobs table if it does not exist
             $createTableQuery = "CREATE TABLE IF NOT EXISTS jobs (
                 job_id INT AUTO_INCREMENT PRIMARY KEY,
                 job_ref VARCHAR(6) NOT NULL,
@@ -86,7 +83,6 @@
             );";
             mysqli_query($conn, $createTableQuery);
 
-            // Check if table is empty; if so, insert default jobs
             $resultCheck = mysqli_query($conn, "SELECT COUNT(*) as count FROM jobs");
             $rowCheck = mysqli_fetch_assoc($resultCheck);
             if ($rowCheck['count'] == 0) {
@@ -125,7 +121,6 @@
                 $stmtInsert->close();
             }
 
-            // Handle search query
             $search = isset($_GET['search']) ? trim($_GET['search']) : '';
             if ($search !== '') {
                 $searchTerm = "%" . $search . "%";
