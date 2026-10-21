@@ -53,9 +53,9 @@ if (!$result) {
         <?php while ($row = mysqli_fetch_assoc($result)) { ?>
 
             <tr>
-                <td><?php echo $row['eoi_id']; ?></td>
-                <td><?php echo htmlspecialchars($row['reference']); ?></td>
-                <td><?php echo htmlspecialchars($row['name']); ?></td>
+                <td><?php echo $row['id']; ?></td>
+                <td><?php echo htmlspecialchars($row['job_ref']); ?></td>
+                <td><?php echo htmlspecialchars($row['NAME']); ?></td>
                 <td><?php echo htmlspecialchars($row['surname']); ?></td>
                 <td><?php echo htmlspecialchars($row['gender']); ?></td>
                 <td><?php echo htmlspecialchars($row['state']); ?></td>
