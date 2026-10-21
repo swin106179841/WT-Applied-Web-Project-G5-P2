@@ -32,7 +32,54 @@ if ($conn) {
         $stmtSeed->execute();$stmtSeed->close();
     }
 
-    
+    // Xử lý xác thực đăng nhập
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $remaining_lockout =$_SESSION['lockout_time'] - time();
+
+        if ($remaining_lockout > 0) {$error_message = "Too many failed login attempts. Please wait " . $remaining_lockout . " seconds before trying again.";
+        } else {
+            if ($_SESSION['lockout_time'] > 0 && $remaining_lockout <= 0) {$_SESSION['login_attempts'] = 0;
+                $_SESSION['lockout_time'] = 0;
+            }
+
+            $username = trim(stripslashes($_POST['username'] ?? ''));
+            $password =$_POST['password'] ?? '';
+
+            if (!empty($username) && !empty($password)) {
+                $stmt =$conn->prepare("SELECT id, username, password FROM users WHERE username = ?");
+                $stmt->bind_param("s", $username);$stmt->execute();
+                $result =$stmt->get_result();
+
+                if ($row =$result->fetch_assoc()) {
+                    if (password_verify($password,$row['password'])) {
+                        // Đăng nhập thành công: Reset bộ đếm & chống Session Fixation
+                        $_SESSION['login_attempts'] = 0;
+                        $_SESSION['lockout_time'] = 0;
+                        session_regenerate_id(true);
+                        $_SESSION['logged_in'] = true;
+                        $_SESSION['username'] =$row['username'];
+
+                        header("Location: manage.php");
+                        exit();
+                    }
+                }
+                $stmt->close();
+
+                // Xử lý khi nhập sai: Khóa tạm thời 30 giây nếu sai quá 3 lần
+                $_SESSION['login_attempts']++;
+                if ($_SESSION['login_attempts'] >= 3) {$_SESSION['lockout_time'] = time() + 30;
+                    $error_message = "Invalid credentials. Access locked for 30 seconds due to multiple failed attempts.";
+                } else {
+                    $attempts_left = 3 - $_SESSION['login_attempts'];$error_message = "Invalid username or password. (" . $attempts_left . " attempt(s) remaining)";
+                }
+            } else {
+                $error_message = "Please enter both username and password.";
+            }
+        }
+    }
+    mysqli_close($conn);
+} else {
+    $error_message = "Database connection error. Please verify settings.php.";
 }
 ?>
 <!DOCTYPE html>
