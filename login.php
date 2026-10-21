@@ -5,81 +5,59 @@ require_once("settings.php");
 
 $error_message = "";
 
-// Khởi tạo bộ đếm chống dò mật khẩu (Brute-force protection chuẩn HD)
-if (!isset($_SESSION['login_attempts'])) {$_SESSION['login_attempts'] = 0;
-    $_SESSION['lockout_time'] = 0;
-}
-
+// Kết nối MySQL và tự động tạo database/bảng users nếu chưa có
 $conn = @mysqli_connect($host, $user,$pwd);
 if ($conn) {
     mysqli_query($conn, "CREATE DATABASE IF NOT EXISTS `$sql_db`");
     mysqli_select_db($conn,$sql_db);
 
-    // Tạo bảng users với ràng buộc chuẩn
     $createUsersTable = "CREATE TABLE IF NOT EXISTS users (
         id INT AUTO_INCREMENT PRIMARY KEY,
         username VARCHAR(50) NOT NULL UNIQUE,
-        password VARCHAR(255) NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        password VARCHAR(255) NOT NULL
     );";
     mysqli_query($conn,$createUsersTable);
 
-    // Tự động khởi tạo tài khoản admin mặc định với mã hóa Bcrypt an toàn tuyệt đối cho người chấm bài
-    $checkAdmin = mysqli_query($conn, "SELECT id FROM users WHERE username = 'admin'");
+    // Tạo tài khoản mặc định admin / admin (mã hóa bằng password_hash)
+    $checkAdmin = mysqli_query($conn, "SELECT * FROM users WHERE username = 'admin'");
     if ($checkAdmin && mysqli_num_rows($checkAdmin) == 0) {$hashed_password = password_hash('admin', PASSWORD_DEFAULT);
         $stmtSeed =$conn->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
         $admin_user = 'admin';$stmtSeed->bind_param("ss", $admin_user,$hashed_password);
         $stmtSeed->execute();$stmtSeed->close();
     }
 
-    // Xử lý xác thực đăng nhập
+    // Xử lý khi người dùng nhấn nút Login
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $remaining_lockout =$_SESSION['lockout_time'] - time();
+        $username = trim($_POST['username'] ?? '');
+        $password = trim($_POST['password'] ?? '');
 
-        if ($remaining_lockout > 0) {$error_message = "Too many failed login attempts. Please wait " . $remaining_lockout . " seconds before trying again.";
-        } else {
-            if ($_SESSION['lockout_time'] > 0 && $remaining_lockout <= 0) {$_SESSION['login_attempts'] = 0;
-                $_SESSION['lockout_time'] = 0;
-            }
+        if (!empty($username) && !empty($password)) {
+            $stmt =$conn->prepare("SELECT id, username, password FROM users WHERE username = ?");
+            $stmt->bind_param("s", $username);$stmt->execute();
+            $result =$stmt->get_result();
 
-            $username = trim(stripslashes($_POST['username'] ?? ''));
-            $password =$_POST['password'] ?? '';
-
-            if (!empty($username) && !empty($password)) {
-                $stmt =$conn->prepare("SELECT id, username, password FROM users WHERE username = ?");
-                $stmt->bind_param("s", $username);$stmt->execute();
-                $result =$stmt->get_result();
-
-                if ($row =$result->fetch_assoc()) {
-                    if (password_verify($password,$row['password'])) {
-                        // Đăng nhập thành công: Reset bộ đếm & chống Session Fixation
-                        $_SESSION['login_attempts'] = 0;
-                        $_SESSION['lockout_time'] = 0;
-                        session_regenerate_id(true);
-                        $_SESSION['logged_in'] = true;
-                        $_SESSION['username'] =$row['username'];
-
-                        header("Location: manage.php");
-                        exit();
-                    }
-                }
-                $stmt->close();
-
-                // Xử lý khi nhập sai: Khóa tạm thời 30 giây nếu sai quá 3 lần
-                $_SESSION['login_attempts']++;
-                if ($_SESSION['login_attempts'] >= 3) {$_SESSION['lockout_time'] = time() + 30;
-                    $error_message = "Invalid credentials. Access locked for 30 seconds due to multiple failed attempts.";
+            if ($row =$result->fetch_assoc()) {
+                if (password_verify($password,$row['password'])) {
+                    session_regenerate_id(true);
+                    $_SESSION['logged_in'] = true;
+                    $_SESSION['username'] =$row['username'];
+                    
+                    header("Location: manage.php");
+                    exit();
                 } else {
-                    $attempts_left = 3 - $_SESSION['login_attempts'];$error_message = "Invalid username or password. (" . $attempts_left . " attempt(s) remaining)";
+                    $error_message = "Invalid username or password.";
                 }
             } else {
-                $error_message = "Please enter both username and password.";
+                $error_message = "Invalid username or password.";
             }
+            $stmt->close();
+        } else {
+            $error_message = "Please enter both username and password.";
         }
     }
     mysqli_close($conn);
 } else {
-    $error_message = "Database connection error. Please verify settings.php.";
+    $error_message = "Database connection error. Please check settings.php.";
 }
 ?>
 <!DOCTYPE html>
@@ -90,7 +68,7 @@ if ($conn) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Duy Kiet Nguyen">
     <meta name="keywords" content="Manage, PHP, EOI, Login, EcoSphere Alliance">
-    <meta name="description" content="Secure HR Manager login page for EcoSphere Alliance">
+    <meta name="description" content="Secure login page for EcoSphere Alliance HR Management">
     <title>HR Manager Login | EcoSphere Alliance</title>
     <link rel="stylesheet" href="./styles/style.css">
     <style>
@@ -116,44 +94,45 @@ if ($conn) {
         .login-header {
             background: linear-gradient(135deg, #023d4f 0%, #217690 100%);
             color: #ffffff;
-            padding: 26px 30px;
+            padding: 28px 30px;
             text-align: center;
         }
         .login-header h1 {
             margin: 0;
-            font-size: 1.55rem;
+            font-size: 1.6rem;
             letter-spacing: 0.5px;
         }
         .login-header p {
-            margin: 6px 0 0;
+            margin: 8px 0 0;
             font-size: 0.9rem;
             opacity: 0.85;
         }
+        /* Ghi đè CSS form toàn cục trong style.css */
         .login-form {
             display: block !important;
             width: 100% !important;
             float: none !important;
-            padding: 28px 30px;
+            padding: 30px;
             box-sizing: border-box;
         }
         .form-group {
-            margin-bottom: 18px;
+            margin-bottom: 20px;
             text-align: left;
         }
         .form-group label {
             display: block;
-            margin-bottom: 7px;
+            margin-bottom: 8px;
             font-weight: 600;
             color: #023d4f;
-            font-size: 0.92rem;
+            font-size: 0.95rem;
         }
         .form-group input[type="text"],
         .form-group input[type="password"] {
             width: 100%;
-            padding: 11px 14px;
+            padding: 12px 14px;
             border: 1.5px solid #cbd5e1;
             border-radius: 6px;
-            font-size: 0.98rem;
+            font-size: 1rem;
             background-color: #f8fafc;
             box-sizing: border-box;
             transition: all 0.2s ease;
@@ -167,7 +146,7 @@ if ($conn) {
         }
         .login-btn {
             width: 100%;
-            padding: 12px;
+            padding: 13px;
             background-color: #023d4f;
             color: #ffffff;
             border: none;
@@ -175,30 +154,33 @@ if ($conn) {
             font-size: 1rem;
             font-weight: bold;
             cursor: pointer;
-            transition: background-color 0.25s ease;
-            margin-top: 4px;
+            transition: background-color 0.25s ease, transform 0.1s ease;
+            margin-top: 5px;
         }
         .login-btn:hover {
             background-color: #217690;
+        }
+        .login-btn:active {
+            transform: scale(0.99);
         }
         .error-banner {
             background-color: #fef2f2;
             color: #b91c1c;
             border-left: 4px solid #ef4444;
-            padding: 11px 14px;
+            padding: 12px 15px;
             border-radius: 4px;
-            margin-bottom: 18px;
-            font-size: 0.88rem;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
             text-align: left;
         }
         .marker-badge {
-            margin-top: 20px;
+            margin-top: 22px;
             padding: 10px 14px;
             background-color: #f0f9ff;
             border: 1px dashed #93c5fd;
             border-radius: 6px;
             text-align: center;
-            font-size: 0.84rem;
+            font-size: 0.85rem;
             color: #0369a1;
         }
         .marker-badge code {
@@ -212,12 +194,12 @@ if ($conn) {
 </head>
 
 <body>
-    <?php include './header.inc'; ?>
+    <?php include './header.inc';?>
     <main class="login-wrapper">
         <div class="login-card">
             <div class="login-header">
                 <h1>HR Manager Portal</h1>
-                <p>Authorised access to manage EOI records</p>
+                <p>Sign in to manage Expressions of Interest</p>
             </div>
 
             <form class="login-form" method="POST" action="login.php" novalidate>
@@ -227,12 +209,12 @@ if ($conn) {
 
                 <div class="form-group">
                     <label for="username">Username</label>
-                    <input type="text" id="username" name="username" placeholder="Enter HR username" value="<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username']) : ''; ?>" required>
+                    <input type="text" id="username" name="username" placeholder="Enter your username" required>
                 </div>
 
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" name="password" placeholder="Enter password" required>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
                 </div>
 
                 <input type="submit" value="Sign In" class="login-btn">
@@ -243,7 +225,6 @@ if ($conn) {
             </form>
         </div>
     </main>
-    <?php include './footer.inc'; ?>
+    <?php include './footer.inc';?>
 </body>
-
 </html>
