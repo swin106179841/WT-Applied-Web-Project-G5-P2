@@ -62,7 +62,29 @@
         require_once("settings.php");
         $conn = @mysqli_connect($host, $user, $pwd, $sql_db);
 
-        
+        if (!$conn) {
+            // Fallback connection without DB name to create it if needed
+            $conn = @mysqli_connect($host, $user, $pwd);
+            if ($conn) {
+                mysqli_query($conn, "CREATE DATABASE IF NOT EXISTS $sql_db");
+                mysqli_select_db($conn, $sql_db);
+            }
+        }
+
+        if ($conn) {
+            // Create jobs table if it does not exist
+            $createTableQuery = "CREATE TABLE IF NOT EXISTS jobs (
+                job_id INT AUTO_INCREMENT PRIMARY KEY,
+                job_ref VARCHAR(6) NOT NULL,
+                job_title VARCHAR(100) NOT NULL,
+                short_desc TEXT NOT NULL,
+                salary VARCHAR(50) NOT NULL,
+                reporting_line VARCHAR(100) NOT NULL,
+                key_responsibilities TEXT NOT NULL,
+                essential_requirements TEXT NOT NULL,
+                preferable_requirements TEXT NOT NULL
+            );";
+        }
         ?>
         
         <aside style="background-color: #f1f8e9; padding: 15px; border-radius: 8px; margin-top: 20px;">
