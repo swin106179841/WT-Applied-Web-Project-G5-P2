@@ -9,3 +9,6 @@
     <meta name="description" content="Manage page for EcoSphere Alliance EOI">
     <title>EcoSphere Alliance-Manage Page</title>
 </head>
+
+<?php
+session_start();
