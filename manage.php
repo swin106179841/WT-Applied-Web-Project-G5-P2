@@ -2,24 +2,15 @@
 session_start();
 require_once 'settings.php';
 
-// authentication
-#if (!isset($_SESSION['user_id'])) {
-    #header('Location: login.php');
-   # exit();
-#}
-$sql = "SELECT * FROM EOI";
-if ($where) {
-    $sql .= " WHERE " . implode(" AND ", $where);
+if (!isset($_SESSION['user_id'])) {
+    header('Location: login.php');
+    exit();
 }
-$sql .= " ORDER BY $sort";
 
-$stmt = $conn->prepare($sql);
-if ($params) {
-    $stmt->bind_param($types, ...$params);
-}
-$stmt->execute();
-$result = $stmt->get_result();
+$sql = "SELECT * FROM EOI";
+$result = $conn->query($sql);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -40,6 +31,7 @@ $result = $stmt->get_result();
         <table>
             <thead>
                 <tr>
+                    <th>EOI ID</th>
                     <th>Reference</th>
                     <th>First Name</th>
                     <th>Surname</th>
@@ -47,7 +39,6 @@ $result = $stmt->get_result();
                     <th>State</th>
                 </tr>
             </thead>
-            <tbody>
             <?php while ($row = $result->fetch_assoc()): ?>
                 <tr>
                     <td><?= $row['eoi_id'] ?></td>
@@ -55,25 +46,13 @@ $result = $stmt->get_result();
                     <td><?= htmlspecialchars($row['name']) ?></td>
                     <td><?= htmlspecialchars($row['surname']) ?></td>
                     <td><?= htmlspecialchars($row['gender']) ?></td>
-                    <td><?=htmlspecialchars($row['state'])?></td>
-                    <td>
-                        <form method="post" action="manage.php?action=status" style="display:inline;">
-                            <input type="hidden" name="eoi_id" value="<?= $row['eoi_id'] ?>">
-                            <select name="new_status">
-                                <option value="New" <?= $row['status'] == 'New' ? 'selected' : '' ?>>New</option>
-                                <option value="Current" <?= $row['status'] == 'Current' ? 'selected' : '' ?>>Current</option>
-                                <option value="Final" <?= $row['status'] == 'Final' ? 'selected' : '' ?>>Final</option>
-                            </select>
-                            <button type="submit">Update</button>
-                        </form>
-                    </td>
+                    <td><?= htmlspecialchars($row['state']) ?></td>
                 </tr>
                 <?php endwhile; ?>
-            </tbody>
-        </table>
+            </table>
+
             <?php else: ?>
-                <p>No EOIs found.</p>
+            <p>No EOIs found.</p>
             <?php endif; ?>
-                </tr>
 </body>
 </html>
