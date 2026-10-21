@@ -19,7 +19,7 @@
 
 <body>
     <?php include './header.inc';?>
-    <main>
+    <main style="display: flow-root;">
         <div id="pageInfo">
             <h1>Apply for a Position</h1>
             <p>
