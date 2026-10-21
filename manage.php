@@ -2,7 +2,7 @@
 session_start();
 require_once 'settings.php';
 
-if (!isset($_SESSION['user_id'])) {
+if (!isset($_SESSION['username'])) {
     header('Location: login.php');
     exit();
 }
