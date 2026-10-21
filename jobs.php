@@ -137,6 +137,34 @@
                 $result = mysqli_query($conn, "SELECT * FROM jobs");
             }
 
+            if ($result && mysqli_num_rows($result) > 0) {
+                while ($row = mysqli_fetch_assoc($result)) {
+                    echo '<section class="job-listing">';
+                    echo '<h2>' . htmlspecialchars($row['job_title']) . '</h2>';
+                    echo '<p><strong>Reference Number:</strong> ' . htmlspecialchars($row['job_ref']) . '</p>';
+                    echo '<p><strong>Short Description:</strong> ' . htmlspecialchars($row['short_desc']) . '</p>';
+                    echo '<p><strong>Salary:</strong> ' . htmlspecialchars($row['salary']) . '</p>';
+                    echo '<p><strong>Reporting Line:</strong> ' . htmlspecialchars($row['reporting_line']) . '</p>';
+                    
+                    echo '<h3>Key Responsibilities</h3>';
+                    echo $row['key_responsibilities']; // Stored safely as structured HTML lists
+
+                    echo '<h3>Essential Requirements</h3>';
+                    echo $row['essential_requirements'];
+
+                    echo '<h3>Preferable Requirements</h3>';
+                    echo $row['preferable_requirements'];
+
+                    echo '<br><a href="apply.php?ref=' . htmlspecialchars($row['job_ref']) . '" class="btn primary">Apply for this position</a>';
+                    echo '</section>';
+                }
+            } else {
+                echo '<p>No job listings found matching your search.</p>';
+            }
+
+            mysqli_close($conn);
+        } else {
+            echo '<p>Database connection failed. Please check your settings.php configuration.</p>';
         }
         ?>
         
