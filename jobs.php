@@ -84,7 +84,40 @@
                 essential_requirements TEXT NOT NULL,
                 preferable_requirements TEXT NOT NULL
             );";
-        }
+            mysqli_query($conn, $createTableQuery);
+
+            // Check if table is empty; if so, insert default jobs
+            $resultCheck = mysqli_query($conn, "SELECT COUNT(*) as count FROM jobs");
+            $rowCheck = mysqli_fetch_assoc($resultCheck);
+            if ($rowCheck['count'] == 0) {
+                $defaultJobs = [
+                    [
+                        'PRK001', 'Park Ranger', 
+                        'Join our frontline conservation efforts by managing, protecting, and restoring local national park ecosystems and guiding community engagement.', 
+                        '$75,000 - $85,000 + Superannuation', 'Reports to the Regional Conservation Director',
+                        '<ul><li>Monitor native flora and fauna populations.</li><li>Conduct guided educational tours for the public.</li><li>Enforce park regulations, maintain trails, and manage invasive species.</li></ul>',
+                        '<ul><li>Bachelor\'s degree in Environmental Science, Ecology, or related field.</li><li>Valid First Aid and CPR certification.</li><li>Current driver\'s license with 4WD experience.</li></ul>',
+                        '<ul><li>2+ years of field experience in land management.</li><li>Experience in controlled burn operations.</li></ul>'
+                    ],
+                    [
+                        'MAR002', 'Marine Biologist', 
+                        'Spearhead our coastal reef restoration projects, monitor marine biodiversity, and collect crucial water quality data for our research initiatives.', 
+                        '$80,000 - $95,000 + Superannuation', 'Reports to the Head of Marine Conservation',
+                        '<ul><li>Collect and analyze water quality and marine life data.</li><li>Design and implement coral rehabilitation programs.</li><li>Publish findings in organizational reports and community newsletters.</li></ul>',
+                        '<ol><li>Master\'s degree in Marine Biology or Oceanography.</li><li>Advanced SCUBA diving certification (PADI Divemaster or equivalent).</li><li>Proficiency in statistical analysis software (e.g., R, Python).</li></ol>',
+                        '<ul><li>Experience with underwater photography and videography.</li><li>Commercial boat license.</li></ul>'
+                    ],
+                    [
+                        'WLD003', 'Wildlife Rehabilitator', 
+                        'Care for injured, sick, and orphaned native wildlife at our primary sanctuary, with the ultimate goal of safe release back into their natural habitats.', 
+                        '$65,000 - $72,000 + Superannuation', 'Reports to the Sanctuary Manager',
+                        '<ul><li>Provide daily medical care, feeding, and rehabilitation for injured animals.</li><li>Maintain detailed records of animal intakes, treatments, and releases.</li><li>Assist in the training of new wildlife volunteers.</li></ul>',
+                        '<ul><li>Certificate III in Captive Animals, Veterinary Nursing, or equivalent.</li><li>Current rabies and tetanus vaccinations.</li><li>Ability to work flexible hours, including weekends and public holidays.</li></ul>',
+                        '<ol><li>Previous experience specifically with marsupial rehabilitation.</li><li>Strong public speaking skills for leading community workshops.</li></ol>'
+                    ]
+                ];
+
+            }}
         ?>
         
         <aside style="background-color: #f1f8e9; padding: 15px; border-radius: 8px; margin-top: 20px;">
