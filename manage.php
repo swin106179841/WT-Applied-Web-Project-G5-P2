@@ -7,8 +7,13 @@ if (!isset($_SESSION['username'])) {
     exit();
 }
 
-$sql = "SELECT * FROM EOI";
-$result = $conn->query($sql);
+// Execute query
+$sql = "SELECT * FROM eoi";
+$result = mysqli_query($conn, $sql);
+
+if (!$result) {
+    die("Query failed: " . mysqli_error($conn));
+}
 ?>
 
 <!DOCTYPE html>
@@ -20,15 +25,15 @@ $result = $conn->query($sql);
     <meta name="author" content="Taya Ford">
     <meta name="keywords" content="Manage, PHP, EOI, Table, EcoSphere Alliance, Environment, Community">
     <meta name="description" content="Manage page for EcoSphere Alliance EOI">
-    <title>EcoSphere Alliance-Manage Page</title>
+    <title>EcoSphere Alliance - Manage Page</title>
 </head>
 
 <body>
     <h1>Manage</h1>
-    <!--<h1>Welcome <?= htmlspecialchars($_SESSION['username']) ?></h1>-->
-    <!-- EOI Table -->
-    <?php if ($result->num_rows > 0): ?>
-        <table>
+    <h2>Welcome <?php echo htmlspecialchars($_SESSION['username']); ?></h2>
+
+    <?php if (mysqli_num_rows($result) > 0): ?>
+        <table border="1">
             <thead>
                 <tr>
                     <th>EOI ID</th>
@@ -39,20 +44,26 @@ $result = $conn->query($sql);
                     <th>State</th>
                 </tr>
             </thead>
-            <?php while ($row = $result->fetch_assoc()): ?>
-                <tr>
-                    <td><?= $row['eoi_id'] ?></td>
-                    <td><?= htmlspecialchars($row['reference']) ?></td>
-                    <td><?= htmlspecialchars($row['name']) ?></td>
-                    <td><?= htmlspecialchars($row['surname']) ?></td>
-                    <td><?= htmlspecialchars($row['gender']) ?></td>
-                    <td><?= htmlspecialchars($row['state']) ?></td>
-                </tr>
+            <tbody>
+                <?php while ($row = mysqli_fetch_assoc($result)): ?>
+                    <tr>
+                        <td><?php echo $row['eoi_id']; ?></td>
+                        <td><?php echo htmlspecialchars($row['reference']); ?></td>
+                        <td><?php echo htmlspecialchars($row['name']); ?></td>
+                        <td><?php echo htmlspecialchars($row['surname']); ?></td>
+                        <td><?php echo htmlspecialchars($row['gender']); ?></td>
+                        <td><?php echo htmlspecialchars($row['state']); ?></td>
+                    </tr>
                 <?php endwhile; ?>
-            </table>
+            </tbody>
+        </table>
+    <?php else: ?>
+        <p>No EOIs found.</p>
+    <?php endif; ?>
 
-            <?php else: ?>
-            <p>No EOIs found.</p>
-            <?php endif; ?>
 </body>
 </html>
+
+<?php
+mysqli_close($conn);
+?>
