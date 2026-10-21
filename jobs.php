@@ -117,7 +117,27 @@
                     ]
                 ];
 
-            }}
+                $stmtInsert = $conn->prepare("INSERT INTO jobs (job_ref, job_title, short_desc, salary, reporting_line, key_responsibilities, essential_requirements, preferable_requirements) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+                foreach ($defaultJobs as $job) {
+                    $stmtInsert->bind_param("ssssssss", $job[0], $job[1], $job[2], $job[3], $job[4], $job[5], $job[6], $job[7]);
+                    $stmtInsert->execute();
+                }
+                $stmtInsert->close();
+            }
+
+            // Handle search query
+            $search = isset($_GET['search']) ? trim($_GET['search']) : '';
+            if ($search !== '') {
+                $searchTerm = "%" . $search . "%";
+                $stmt = $conn->prepare("SELECT * FROM jobs WHERE job_title LIKE ? OR short_desc LIKE ? OR job_ref LIKE ?");
+                $stmt->bind_param("sss", $searchTerm, $searchTerm, $searchTerm);
+                $stmt->execute();
+                $result = $stmt->get_result();
+            } else {
+                $result = mysqli_query($conn, "SELECT * FROM jobs");
+            }
+
+        }
         ?>
         
         <aside style="background-color: #f1f8e9; padding: 15px; border-radius: 8px; margin-top: 20px;">
