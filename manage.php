@@ -67,8 +67,17 @@ if (!$result) {
                 <th>Reference</th>
                 <th>First Name</th>
                 <th>Surname</th>
+                <th>Date of Birth</th>
                 <th>Gender</th>
+                <th>Street</th>
+                <th>Suburb</th>
                 <th>State</th>
+                <th>Postcode</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Skills</th>
+                <th>Other Skills</th>
+                <th>Status</th>
             </tr>
         </thead>
         <tbody>
@@ -80,8 +89,18 @@ if (!$result) {
                 <td><?php echo htmlspecialchars($row['job_ref']); ?></td>
                 <td><?php echo htmlspecialchars($row['NAME']); ?></td>
                 <td><?php echo htmlspecialchars($row['surname']); ?></td>
+                <td><?php echo htmlspecialchars($row['dob']); ?></td>
                 <td><?php echo htmlspecialchars($row['gender']); ?></td>
+                <td><?php echo htmlspecialchars($row['street']); ?></td>
+                <td><?php echo htmlspecialchars($row['suburb']); ?></td>
                 <td><?php echo htmlspecialchars($row['state']); ?></td>
+                <td><?php echo htmlspecialchars($row['postcode']); ?></td>
+                <td><?php echo htmlspecialchars($row['email']); ?></td>
+                <td><?php echo htmlspecialchars($row['phone']); ?></td>
+                <td><?php echo htmlspecialchars($row['skills']); ?></td>
+                <td><?php echo htmlspecialchars($row['other_skills']); ?></td>
+                <td><?php echo htmlspecialchars($row['STATUS']); ?></td>
+
             </tr>
 
         <?php } ?>
