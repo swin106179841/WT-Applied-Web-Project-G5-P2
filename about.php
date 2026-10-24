@@ -1,3 +1,23 @@
+
+<?php
+include './settings.php';
+
+$conn = mysqli_connect($host, $user, $pwd, $sql_db);
+
+if (!$conn) {
+    die("Database connection failed.");
+}
+
+$sql = "SELECT * FROM about";
+$result = mysqli_query($conn, $sql);
+
+$members = [];
+
+while ($row = mysqli_fetch_assoc($result)) {
+    $members[] = $row;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -13,7 +33,6 @@
 
     <link rel="stylesheet" href="./styles/style.css">
 
-
     <style>
         .about-intro {
             font-style: italic;
@@ -23,7 +42,7 @@
 
 <body>
 
-    <?php include './header.inc';?>
+    <?php include './header.inc'; ?>
 
     <main>
 
@@ -32,8 +51,19 @@
         <p class="about-intro" style="text-align: center;">
             Meet Group 5, the team behind the EcoSphere website project.
         </p>
+         <!-- Group photo goes here -->
+        <section class="group-photo">
+            <h2>Meet Group 5</h2>
 
-   
+            <figure>
+                <img src="./assets/Group_photo.jpg"
+                     alt="Group 5 members together"
+                     style="max-width: 100%; height: auto;">
+
+                <figcaption>Group 5 - EcoSphere Website Project</figcaption>
+            </figure>
+        </section>
+
         <section>
             <h2>Group Information</h2>
 
@@ -48,67 +78,52 @@
             </ul>
         </section>
 
-
         <section>
             <h2>Member Contributions</h2>
 
-            <dl>
-                <dt>Taya Ford</dt>
-                <dd>Student ID: <span class="student-id">106463874</span></dd>
-                <dd>Contribution: Index, Company branding</dd>
+            <?php foreach ($members as $member) { ?>
+                <h3><?php echo htmlspecialchars($member['Name']); ?></h3>
 
-                <dt>Aidan Grier</dt>
-                <dd>Student ID: <span class="student-id">106179841</span></dd>
-                <dd>Contribution: Apply</dd>
+                <p>
+                    Student ID:
+                    <?php echo htmlspecialchars($member['Student ID']); ?>
+                </p>
 
-                <dt>Duy Kiet Nguyen</dt>
-                <dd>Student ID: <span class="student-id">105062270</span></dd>
-                <dd>Contribution: Jobs</dd>
-
-                <dt>Sky Pall</dt>
-                <dd>Student ID: <span class="student-id">106309952</span></dd>
-                <dd>Contribution: About </dd>
-            </dl>
+                <p>
+                    Contribution:
+                    <?php echo nl2br(htmlspecialchars($member['Contribution Statement'])); ?>
+                </p>
+            <?php } ?>
         </section>
 
-      
         <section>
             <h2>Member Quotes</h2>
 
-            <h3>Taya Ford</h3>
-            <p><strong>Quote:</strong> " it is what is is"</p>
-            
+            <?php foreach ($members as $member) { ?>
+                <h3><?php echo htmlspecialchars($member['Name']); ?></h3>
 
-            <h3>Aidan Grier</h3>
-            <p><strong>Quote:</strong> “He who knows contentment is rich."</p>
-           
-
-            <h3>Duy Kiet Nguyen</h3>
-            <p><strong>Quote:</strong> idk</p>
-            
-
-            <h3>Sky Pall</h3>
-            <p><strong>Quote:</strong> Yolo</p>
-           
+                <p>
+                    <strong>Quote:</strong>
+                    <?php echo htmlspecialchars($member['Quote']); ?>
+                </p>
+            <?php } ?>
         </section>
 
-      
         <section>
             <h2>Our Group</h2>
 
             <figure class="group-figure">
                 <img src="./assets/group-photo.jpg"
-                    alt="Group 5 members standing together">
+                     alt="Group 5 members standing together">
                 <figcaption>Group 5 - EcoSphere Website Project</figcaption>
             </figure>
         </section>
 
-      
         <section>
             <h2>Fun Facts About Our Team</h2>
 
             <table class="team-table">
-                <caption>Fun Facts About Group 4 Members</caption>
+                <caption>Fun Facts About Group 5 Members</caption>
 
                 <thead>
                     <tr>
@@ -119,40 +134,24 @@
                 </thead>
 
                 <tbody>
-                    <tr>
-                        <td>Taya Ford</td>
-                        <td class="student-id">106463874</td>
-                        <td>I've been to Hawaii.</td>
-                    </tr>
-
-                    <tr>
-                        <td>Aidan Grier</td>
-                        <td class="student-id">106179841</td>
-                        <td>I like snowboarding in Japan.</td>
-                    </tr>
-
-                    <tr>
-                        <td>Duy Kiet Nguyen</td>
-                        <td class="student-id">105062270</td>
-                        <td>I study at Swinburne University.</td>
-                    </tr>
-
-                    <tr>
-                        <td>Sky Pall</td>
-                        <td class="student-id">106309952</td>
-                        <td>I am a twin.</td>
-                    </tr>
+                    <?php foreach ($members as $member) { ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($member['Name']); ?></td>
+                            <td class="student-id">
+                                <?php echo htmlspecialchars($member['Student ID']); ?>
+                            </td>
+                            <td><?php echo htmlspecialchars($member['Fun Fact']); ?></td>
+                        </tr>
+                    <?php } ?>
                 </tbody>
             </table>
         </section>
 
     </main>
 
-    <?php include './footer.inc';?>
+    <?php include './footer.inc'; ?>
 
+    <?php mysqli_close($conn); ?>
 
 </body>
-
 </html>
-
-
