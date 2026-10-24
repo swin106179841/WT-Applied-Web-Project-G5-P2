@@ -55,6 +55,11 @@ if (!$result) {
     <input type="submit" name="searchbutton" value="Search">
 </form>
 
+<form method="post" action="manage.php">
+    <input type="text" name="delete" placeholder="Type a Job Ref to Delete">
+    <input type="submit" name="deletebutton" value="Delete">
+</form>
+
 <br>
 <br>
 
