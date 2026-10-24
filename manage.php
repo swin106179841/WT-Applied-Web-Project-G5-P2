@@ -27,6 +27,16 @@ if (isset($_POST['searchbutton']) && !empty($_POST['search'])) {
     ";
 }
 
+if (isset($_POST['deletebutton']) && !empty($_POST['delete'])) {
+    $delete = mysqli_real_escape_string($dbconn, $_POST['delete']);
+
+    $deleteQuery = "DELETE FROM eoi WHERE job_ref = '$delete'";
+
+    if (!mysqli_query($dbconn, $deleteQuery)) {
+        die("Delete failed: " . mysqli_error($dbconn));
+    }
+}
+
 $result = mysqli_query($dbconn, $query);
 
 if (!$result) {
@@ -55,7 +65,10 @@ if (!$result) {
     <input type="submit" name="searchbutton" value="Search">
 </form>
 
-<form method="post" action="manage.php">
+<br>
+
+<h4>Delete all EOI's by Job Reference No.</h4>
+<form method="post" action="manage.php?action=delete" onsubmit="return confirm('Delete ALL EOIs for this job reference?');">
     <input type="text" name="delete" placeholder="Type a Job Ref to Delete">
     <input type="submit" name="deletebutton" value="Delete">
 </form>
