@@ -69,22 +69,18 @@ if (!$result) {
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EcoSphere Alliance - Manage</title>
 </head>
 
+
 <body>
-
 <h1>Manage EOIs</h1>
-
 <h2>Welcome <?php echo htmlspecialchars($_SESSION['username']); ?></h2>
 
-
 <h4>Search by Job Reference No., First Name OR Last Name</h4>
-
 <form method="post" action="manage.php">
     <input type="text" name="search" placeholder="Job Ref, First Name or Surname">
     <input type="submit" name="searchbutton" value="Search">
@@ -92,9 +88,7 @@ if (!$result) {
 
 <br>
 
-
 <h4>Delete all EOI's by Job Reference No.</h4>
-
 <form method="post" action="manage.php"
       onsubmit="return confirm('Delete ALL EOIs for this job reference?');">
     <input type="text" name="delete" placeholder="Type a Job Ref to Delete">
@@ -104,9 +98,7 @@ if (!$result) {
 <br>
 
 <h4>Change EOI Status by ID No.</h4>
-
 <form method="post" action="manage.php">
-
     <input type="number" name="eoi_id"
            placeholder="Enter EOI ID" required>
     <select name="status" required>
@@ -121,9 +113,7 @@ if (!$result) {
 <br>
 
 <?php if (mysqli_num_rows($result) > 0) { ?>
-
 <table border="1">
-
     <thead>
         <tr>
             <th>EOI ID</th>
@@ -143,11 +133,8 @@ if (!$result) {
             <th>Status</th>
         </tr>
     </thead>
-
     <tbody>
-
     <?php while ($row = mysqli_fetch_assoc($result)) { ?>
-
         <tr>
             <td><?php echo $row['id']; ?></td>
             <td><?php echo htmlspecialchars($row['job_ref']); ?></td>
@@ -165,19 +152,13 @@ if (!$result) {
             <td><?php echo htmlspecialchars($row['other_skills']); ?></td>
             <td><?php echo htmlspecialchars($row['STATUS']); ?></td>
         </tr>
-
     <?php } ?>
-
     </tbody>
-
 </table>
 
 <?php } else { ?>
-
 <p>No EOIs found.</p>
-
 <?php } ?>
-
 </body>
 </html>
 
