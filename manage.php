@@ -17,19 +17,14 @@ $query = "SELECT * FROM eoi";
 
 // search by jobref name and surname
 if (isset($_POST['searchbutton']) && !empty($_POST['search'])) {
-
     $search = mysqli_real_escape_string($dbconn, $_POST['search']);
-
     $query = "SELECT * FROM eoi WHERE job_ref LIKE '%$search%' OR NAME LIKE '%$search%' OR surname LIKE '%$search%'";
 }
 
 // delete by jobref
 if (isset($_POST['deletebutton']) && !empty($_POST['delete'])) {
-
     $delete = mysqli_real_escape_string($dbconn, $_POST['delete']);
-
     $deleteQuery = "DELETE FROM eoi WHERE job_ref = '$delete'";
-
     if (!mysqli_query($dbconn, $deleteQuery)) {
         die("Delete failed: " . mysqli_error($dbconn));
     }
@@ -37,18 +32,25 @@ if (isset($_POST['deletebutton']) && !empty($_POST['delete'])) {
 
 // update status
 if (isset($_POST['updateStatus'])) {
-
     $eoi_id = mysqli_real_escape_string($dbconn, $_POST['eoi_id']);
     $status = mysqli_real_escape_string($dbconn, $_POST['status']);
-
     $updateQuery = "UPDATE eoi SET STATUS = '$status' WHERE id = '$eoi_id'";
-
     if (!mysqli_query($dbconn, $updateQuery)) {
         die("Status update failed: " . mysqli_error($dbconn));
     }
-
     header("Location: manage.php");
     exit();
+}
+
+// Sort the EOI
+if (isset($_POST['sortbutton'])) {
+    $allowedFields = array("id", "job_ref", "NAME", "surname", "STATUS");
+    $sortfield = $_POST['sortfield'];
+    $sortorder = $_POST['sortorder'];
+    if (in_array($sortfield, $allowedFields)
+        && ($sortorder == "ASC" || $sortorder == "DESC")) {
+        $query = "SELECT * FROM eoi ORDER BY $sortfield $sortorder";
+    }
 }
 
 $result = mysqli_query($dbconn, $query);
@@ -143,7 +145,7 @@ if (!$result) {
 <h1>Manage EOIs</h1>
 <h2>Welcome <?php echo htmlspecialchars($_SESSION['username']); ?></h2>
 
-<h4>Search by Job Reference No., First Name OR Last Name</h4>
+<h4>Search by Job Reference Number, First Name OR Last Name</h4>
 <form method="post" action="manage.php">
     <input type="text" name="search" placeholder="Job Ref, First Name or Surname">
     <input type="submit" name="searchbutton" value="Search">
@@ -151,7 +153,7 @@ if (!$result) {
 
 <br>
 
-<h4>Delete all EOI's by Job Reference No.</h4>
+<h4>Delete all EOI's by Job Reference Number</h4>
 <form method="post" action="manage.php"
       onsubmit="return confirm('Delete ALL EOIs for this job reference?');">
     <input type="text" name="delete" placeholder="Type a Job Ref to Delete">
@@ -160,7 +162,7 @@ if (!$result) {
 </form>
 <br>
 
-<h4>Change EOI Status by ID No.</h4>
+<h4>Change EOI Status by ID Number</h4>
 <form method="post" action="manage.php">
     <input type="number" name="eoi_id"
            placeholder="Enter EOI ID" required>
@@ -185,8 +187,8 @@ if (!$result) {
         <option value="STATUS">Status</option>
     </select>
     <select name="sortorder">
-        <option value="Ascending">Ascending</option>
-        <option value="Descending">Descending</option>
+        <option value="ASC">Ascending</option>
+        <option value="DESC">Descending</option>
     </select>
     <input type="submit" name="sortbutton" value="Sort">
 </form>
