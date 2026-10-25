@@ -141,7 +141,25 @@ if (!$result) {
             border-collapse: collapse; 
             border: 3px solid #023d4f; 
         }
-        
+
+        .Searching input[type="text"], .delete input[type="text"], .status input[type="text"], .sort input[type="text"] {
+            padding: 8px 12px;
+            width: 300px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .Searching input[type="submit"], .delete input[type="submit"], .status input[type="submit"], .sort input[type="submit"] {
+            padding: 8px 16px;
+            background-color: #217690;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .Searching input[type="submit"]:hover, .delete input[type="submit"]:hover, .status input[type="submit"]:hover, .sort input[type="submit"]:hover {
+            background-color: #023d4f;
+        }
+
     </style>
 </head>
 <body>
@@ -151,23 +169,27 @@ if (!$result) {
 <h2>Welcome <?php echo htmlspecialchars($_SESSION['username']); ?></h2>
 
 <h4>Search by Job Reference Number, First Name OR Last Name</h4>
+<div class=Searching>
 <form method="post" action="manage.php">
     <input type="text" name="search" placeholder="Job Ref, First Name or Surname">
     <input type="submit" name="searchbutton" value="Search">
 </form>
+</div>
 
 <br>
 
 <h4>Delete all EOI's by Job Reference Number</h4>
+<div class=delete>
 <form method="post" action="manage.php"
       onsubmit="return confirm('Delete ALL EOIs for this job reference?');">
     <input type="text" name="delete" placeholder="Type a Job Ref to Delete">
     <input type="submit" name="deletebutton" value="Delete">
-
 </form>
+</div>
 <br>
 
 <h4>Change EOI Status by ID Number</h4>
+<div class=status>
 <form method="post" action="manage.php">
     <input type="number" name="eoi_id"
            placeholder="Enter EOI ID" required>
@@ -179,10 +201,12 @@ if (!$result) {
     </select>
     <input type="submit" name="updateStatus" value="Update Status">
 </form>
+</div>
 
 <br>
 
 <h4>Sort the Results using the EOI</h4>
+<div class=sort>
 <form method="post" action="manage.php">
     <select name="sortfield" required>
         <option value="id">EOI ID</option>
@@ -197,6 +221,7 @@ if (!$result) {
     </select>
     <input type="submit" name="sortbutton" value="Sort">
 </form>
+</div>
 
 <br>
 
