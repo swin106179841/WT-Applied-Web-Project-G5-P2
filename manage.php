@@ -73,10 +73,82 @@ if (!$result) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EcoSphere Alliance - Manage</title>
+    <style>
+        body {
+            margin: 0;
+            margin-top: 6em;
+            padding: 0;
+            font-family: sans-serif;
+            margin-top: 6em;
+        }
+
+        header {
+            border-bottom: 5px solid #217690;
+            position: fixed;
+            top: 0;
+            box-shadow: 0px 2px 7px 5px #999;
+            width: 100vw;
+        }
+
+        nav {
+            height: 5em;
+            background-color: #023d4f;
+        }
+
+        nav ul {
+            height: 100%;
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav li {
+            height: 5em;
+            width: 25%;
+            min-width: 75px;
+        }
+
+        nav a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: white;
+            text-decoration: none;
+            font-size: large;
+            font-weight: bold;
+            transition: background-color 500ms;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+            background-color: #217690;
+        }
+
+        nav a img {
+            object-fit: cover;
+            height: 90%;
+        }
+        main {
+            margin-left: 1em;
+            margin-right: 1em;
+        }
+        footer {
+            clear:both;
+            margin-left: 1em;
+            margin-right: 1em;
+        }
+        table {
+            margin-bottom: 3em;
+        }
+    </style>
 </head>
-
-
 <body>
+<?php require_once "header.inc";?>
+<main>
 <h1>Manage EOIs</h1>
 <h2>Welcome <?php echo htmlspecialchars($_SESSION['username']); ?></h2>
 
@@ -157,8 +229,10 @@ if (!$result) {
 </table>
 
 <?php } else { ?>
-<p>No EOIs found.</p>
+    <p>No EOIs found.</p>
 <?php } ?>
+</main>
+<?php require_once "footer.inc";?>
 </body>
 </html>
 
