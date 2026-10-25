@@ -175,6 +175,24 @@ if (!$result) {
 
 <br>
 
+<h4>Sort the Results using the EOI</h4>
+<form method="post" action="manage.php">
+    <select name="sortfield" required>
+        <option value="id">EOI ID</option>
+        <option value="job_ref">Job Reference</option>
+        <option value="NAME">First Name</option>
+        <option value="surname">Surname</option>
+        <option value="STATUS">Status</option>
+    </select>
+    <select name="sortorder">
+        <option value="Ascending">Ascending</option>
+        <option value="Descending">Descending</option>
+    </select>
+    <input type="submit" name="sortbutton" value="Sort">
+</form>
+
+<br>
+
 <?php if (mysqli_num_rows($result) > 0) { ?>
 <table border="1">
     <thead>
