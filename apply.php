@@ -14,6 +14,9 @@
             content: "*";
             color: red;
         }
+        body {
+            background: #f4f8f9;
+        }
     </style>
 </head>
 
@@ -61,7 +64,7 @@
                     <input type="text" name="DoB" id="DoB" placeholder="dd/mm/yyyy"
                         pattern="[0-3][0-9]/[0-1][0-9]/[1-2][0-9][0-9][0-9]" required>
                 </p>
-                <fieldset class="formSection" id="genderFieldset">
+                <fieldset class="" id="genderFieldset">
                     <legend class="labelRequired">Gender</legend>
                     <input type="radio" name="gender" id="genderM" value="male" required>
                     <label for="genderM">Male</label>
