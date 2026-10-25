@@ -20,12 +20,7 @@ if (isset($_POST['searchbutton']) && !empty($_POST['search'])) {
 
     $search = mysqli_real_escape_string($dbconn, $_POST['search']);
 
-    $query = "
-        SELECT * FROM eoi
-        WHERE job_ref LIKE '%$search%'
-        OR NAME LIKE '%$search%'
-        OR surname LIKE '%$search%'
-    ";
+    $query = "SELECT * FROM eoi WHERE job_ref LIKE '%$search%' OR NAME LIKE '%$search%' OR surname LIKE '%$search%'";
 }
 
 // delete by jobref
@@ -46,11 +41,7 @@ if (isset($_POST['updateStatus'])) {
     $eoi_id = mysqli_real_escape_string($dbconn, $_POST['eoi_id']);
     $status = mysqli_real_escape_string($dbconn, $_POST['status']);
 
-    $updateQuery = "
-        UPDATE eoi
-        SET STATUS = '$status'
-        WHERE id = '$eoi_id'
-    ";
+    $updateQuery = "UPDATE eoi SET STATUS = '$status' WHERE id = '$eoi_id'";
 
     if (!mysqli_query($dbconn, $updateQuery)) {
         die("Status update failed: " . mysqli_error($dbconn));
