@@ -137,6 +137,11 @@ if (!$result) {
         table {
             margin-bottom: 3em;
         }
+        table, th, td {
+            border-collapse: collapse; 
+            border: 3px solid #023d4f; 
+        }
+        
     </style>
 </head>
 <body>
